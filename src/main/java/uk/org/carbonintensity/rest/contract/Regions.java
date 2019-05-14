@@ -1,4 +1,4 @@
-package uk.org.carbonintensity;
+package uk.org.carbonintensity.rest.contract;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
