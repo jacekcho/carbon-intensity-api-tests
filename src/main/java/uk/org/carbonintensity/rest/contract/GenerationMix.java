@@ -8,7 +8,7 @@ public class GenerationMix {
     private String fuel;
 
     @JsonProperty
-    private int perc;
+    private double perc;
 
     public String getFuel() {
         return fuel;
@@ -18,11 +18,11 @@ public class GenerationMix {
         this.fuel = fuel;
     }
 
-    public int getPerc() {
+    public double getPerc() {
         return perc;
     }
 
-    public void setPerc(int perc) {
+    public void setPerc(double perc) {
         this.perc = perc;
     }
 }

@@ -1,12 +1,10 @@
 package uk.org.carbonintensity.rest;
 
+import uk.org.carbonintensity.rest.contract.GenerationMix;
 import uk.org.carbonintensity.rest.contract.Regional;
 import uk.org.carbonintensity.rest.contract.Regions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.get;
@@ -28,6 +26,25 @@ public class CarbonIntensityApi {
                 .stream()
                 .sorted(Comparator.comparing(r -> r.getData().get(0).getIntensity().getForecast()))
                 .collect(Collectors.toList());
+    }
+
+    public Map<String, Double> getGenerationMixSums(List<Regions> allRegions) {
+        Map<String, Double> generationMixSums = new HashMap<>();
+
+        for (Regions region : allRegions) {
+            Double generationMixSum = getGenerationMixSum(region);
+            generationMixSums.put(region.getShortName(), generationMixSum);
+        }
+
+        return generationMixSums;
+    }
+
+    private double getGenerationMixSum(Regions region) {
+        return region.getData().get(0)
+                .getGenerationMix()
+                .stream()
+                .mapToDouble(GenerationMix::getPerc)
+                .sum();
     }
 
     private List<Integer> getAllRegionsIds() {
