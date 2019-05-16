@@ -28,7 +28,7 @@ public class CarbonIntensityApi {
                 .collect(Collectors.toList());
     }
 
-    public Map<String, Double> getGenerationMixSums(List<Regions> allRegions) {
+    public Map<String, Double> getCarbonIntensityPercentageForRegion(List<Regions> allRegions) {
         Map<String, Double> generationMixSums = new HashMap<>();
 
         for (Regions region : allRegions) {

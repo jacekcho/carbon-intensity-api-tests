@@ -1,5 +1,6 @@
 package uk.org.carbonintensity;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import uk.org.carbonintensity.rest.CarbonIntensityApi;
 import uk.org.carbonintensity.rest.contract.Regions;
@@ -25,17 +26,23 @@ public class CarbonIntensityTest extends TestBase {
     }
 
     @Test
-    public void shouldCheckIsGenerationMixSumsTo100() { //TODO refactoring
+    public void shouldCheckIsGenerationMixSumsTo100() {
         // given
         List<Regions> allRegions = carbonIntensityApi.getAllRegions();
+        Map<String, Double> carbonIntensityPercentageForRegion = carbonIntensityApi.getCarbonIntensityPercentageForRegion(allRegions);
 
         // when
-        Map<String, Double> generationMixSums = carbonIntensityApi.getGenerationMixSums(allRegions);
+        boolean isGenerationMixSumTo100 = carbonIntensityPercentageForRegion.keySet()
+                .stream()
+                .allMatch(k -> carbonIntensityPercentageForRegion.get(k).equals(100.0));
 
-        // then //TODO assertion
-        for (String region : generationMixSums.keySet()) {
-            System.out.println(region + " - " + generationMixSums.get(region));
-        }
+        // then
+        Assert.assertTrue(isGenerationMixSumTo100);
     }
+
+// TODO
+//    Scenario 3 (optional):
+//1. For each region get carbon intensity
+//2. For each fuel type list five regions where the generation percentage is the highest
 
 }
