@@ -4,6 +4,7 @@ import uk.org.carbonintensity.rest.contract.GenerationMix;
 import uk.org.carbonintensity.rest.contract.Regional;
 import uk.org.carbonintensity.rest.contract.Regions;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,20 +32,24 @@ public class CarbonIntensityApi {
         return sortedList;
     }
 
-    public List<Double> getCarbonIntensityPercentageForRegion(List<Regions> allRegions) {
-        List<Double> carbonIntensityPercentageList = new ArrayList<>();
-        for (Regions region : allRegions) {
-            carbonIntensityPercentageList.add(getGenerationMixSum(region));
-        }
-        return carbonIntensityPercentageList;
+    public boolean isGenerationMixSumsTo100ForAllRegions(List<Regions> allRegions) {
+        return allRegions
+                .stream()
+                .map(this::getGenationMixSum)
+                .allMatch(c -> c.toString().equals("100.0"));
     }
 
-    private Double getGenerationMixSum(Regions region) {
-        return region.getData().get(0)
-                .getGenerationMix()
-                .stream()
-                .mapToDouble(GenerationMix::getPerc)
-                .sum();
+    private BigDecimal getGenationMixSum(Regions region) {
+        List<GenerationMix> generationMix = region
+                .getData().get(0)
+                .getGenerationMix();
+
+        BigDecimal sum = new BigDecimal(0);
+
+        for (GenerationMix gm : generationMix) {
+            sum = sum.add(gm.getPerc());
+        }
+        return sum;
     }
 
     private List<Integer> getAllRegionsIds() {

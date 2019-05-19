@@ -15,7 +15,7 @@ public class CarbonIntensityTest extends TestBase {
     private CarbonIntensityApi carbonIntensityApi = new CarbonIntensityApi();
 
     @Test
-    public void shouldPrintASortedListOfCarbonIntensityForecast() {
+    public void shouldPrintSortedListOfCarbonIntensityForecast() {
         // given
         List<Regions> allRegions = carbonIntensityApi.getAllRegions();
 
@@ -30,12 +30,9 @@ public class CarbonIntensityTest extends TestBase {
     public void shouldCheckIsGenerationMixSumsTo100() {
         // given
         List<Regions> allRegions = carbonIntensityApi.getAllRegions();
-        List<Double> carbonIntensityPercentageForRegion = carbonIntensityApi.getCarbonIntensityPercentageForRegion(allRegions);
 
         // when
-        boolean isGenerationMixSumTo100 = carbonIntensityPercentageForRegion
-                .stream()
-                .allMatch(c -> c.equals(100.0));
+        boolean isGenerationMixSumTo100 = carbonIntensityApi.isGenerationMixSumsTo100ForAllRegions(allRegions);
 
         // then
         assertThat(isGenerationMixSumTo100).isTrue();
