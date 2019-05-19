@@ -22,24 +22,24 @@ public class CarbonIntensityApi {
     }
 
     public List<Regions> getSortedListByCarbonIntensity(List<Regions> allRegions) {
-        return allRegions
-                .stream()
+        List<Regions> sortedList = allRegions.stream()
                 .sorted(Comparator.comparing(r -> r.getData().get(0).getIntensity().getForecast()))
                 .collect(Collectors.toList());
+
+        Collections.reverse(sortedList);
+
+        return sortedList;
     }
 
-    public Map<String, Double> getCarbonIntensityPercentageForRegion(List<Regions> allRegions) {
-        Map<String, Double> generationMixSums = new HashMap<>();
-
+    public List<Double> getCarbonIntensityPercentageForRegion(List<Regions> allRegions) {
+        List<Double> carbonIntensityPercentageList = new ArrayList<>();
         for (Regions region : allRegions) {
-            Double generationMixSum = getGenerationMixSum(region);
-            generationMixSums.put(region.getShortName(), generationMixSum);
+            carbonIntensityPercentageList.add(getGenerationMixSum(region));
         }
-
-        return generationMixSums;
+        return carbonIntensityPercentageList;
     }
 
-    private double getGenerationMixSum(Regions region) {
+    private Double getGenerationMixSum(Regions region) {
         return region.getData().get(0)
                 .getGenerationMix()
                 .stream()

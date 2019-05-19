@@ -1,13 +1,14 @@
-package uk.org.carbonintensity;
+package uk.org.carbonintensity.acceptancetests;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import uk.org.carbonintensity.rest.CarbonIntensityApi;
 import uk.org.carbonintensity.rest.contract.Regions;
 import uk.org.carbonintensity.utils.TestBase;
 
 import java.util.List;
-import java.util.Map;
+
+import static org.fest.assertions.Assertions.assertThat;
+import static uk.org.carbonintensity.helpers.TestHelper.printForecastByRegionName;
 
 public class CarbonIntensityTest extends TestBase {
 
@@ -22,22 +23,22 @@ public class CarbonIntensityTest extends TestBase {
         List<Regions> sortedRegions = carbonIntensityApi.getSortedListByCarbonIntensity(allRegions);
 
         // then
-        sortedRegions.forEach(r -> System.out.println(r.getShortName() + " " + r.getData().get(0).getIntensity().getForecast()));
+        printForecastByRegionName(sortedRegions);
     }
 
     @Test
     public void shouldCheckIsGenerationMixSumsTo100() {
         // given
         List<Regions> allRegions = carbonIntensityApi.getAllRegions();
-        Map<String, Double> carbonIntensityPercentageForRegion = carbonIntensityApi.getCarbonIntensityPercentageForRegion(allRegions);
+        List<Double> carbonIntensityPercentageForRegion = carbonIntensityApi.getCarbonIntensityPercentageForRegion(allRegions);
 
         // when
-        boolean isGenerationMixSumTo100 = carbonIntensityPercentageForRegion.keySet()
+        boolean isGenerationMixSumTo100 = carbonIntensityPercentageForRegion
                 .stream()
-                .allMatch(k -> carbonIntensityPercentageForRegion.get(k).equals(100.0));
+                .allMatch(c -> c.equals(100.0));
 
         // then
-        Assert.assertTrue(isGenerationMixSumTo100);
+        assertThat(isGenerationMixSumTo100).isTrue();
     }
 
 // TODO
