@@ -35,19 +35,19 @@ public class CarbonIntensityApi {
     public boolean isGenerationMixSumsTo100ForAllRegions(List<Regions> allRegions) {
         return allRegions
                 .stream()
-                .map(this::getGenationMixSum)
+                .map(this::getGenerationMixSum)
                 .allMatch(c -> c.toString().equals("100.0"));
     }
 
-    private BigDecimal getGenationMixSum(Regions region) {
+    private BigDecimal getGenerationMixSum(Regions region) {
         List<GenerationMix> generationMix = region
                 .getData().get(0)
                 .getGenerationMix();
 
-        BigDecimal sum = new BigDecimal(0);
+        BigDecimal sum = new BigDecimal(0.0);
 
         for (GenerationMix gm : generationMix) {
-            sum = sum.add(gm.getPerc());
+            sum = sum.add(new BigDecimal(Double.toString(gm.getPerc())));
         }
         return sum;
     }

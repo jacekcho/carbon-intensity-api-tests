@@ -10,7 +10,7 @@ public class GenerationMix {
     private String fuel;
 
     @JsonProperty
-    private BigDecimal perc;
+    private double perc;
 
     public String getFuel() {
         return fuel;
@@ -20,11 +20,11 @@ public class GenerationMix {
         this.fuel = fuel;
     }
 
-    public BigDecimal getPerc() {
+    public double getPerc() {
         return perc;
     }
 
-    public void setPerc(BigDecimal perc) {
+    public void setPerc(double perc) {
         this.perc = perc;
     }
 }
