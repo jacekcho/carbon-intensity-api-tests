@@ -23,7 +23,8 @@ public class CarbonIntensityApi {
     }
 
     public List<Regions> getSortedListByCarbonIntensity(List<Regions> allRegions) {
-        List<Regions> sortedList = allRegions.stream()
+        List<Regions> sortedList = allRegions
+                .stream()
                 .sorted(Comparator.comparing(r -> r.getData().get(0).getIntensity().getForecast()))
                 .collect(Collectors.toList());
 
@@ -37,6 +38,22 @@ public class CarbonIntensityApi {
                 .stream()
                 .map(this::getGenerationMixSum)
                 .allMatch(c -> c.toString().equals("100.0"));
+    }
+
+    public Set<String> getAllFuelTypes(List<Regions> allRegions) {
+        return allRegions
+                .stream()
+                .flatMap(r -> r.getData().stream())
+                .flatMap(d -> d.getGenerationMix().stream())
+                .map(GenerationMix::getFuel)
+                .collect(Collectors.toSet());
+    }
+
+    public List<String> getAllRegionNames(List<Regions> allRegions) {
+        return allRegions
+                .stream()
+                .map(Regions::getShortName)
+                .collect(Collectors.toList());
     }
 
     private BigDecimal getGenerationMixSum(Regions region) {
