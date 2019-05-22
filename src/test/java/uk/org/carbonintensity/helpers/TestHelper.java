@@ -16,11 +16,11 @@ public class TestHelper {
         return region.getData().get(0).getIntensity().getForecast();
     }
 
-    public static void printRegionsWithHighestGenerationPercentageByFuelType(Set<String> fuelTypes, Map<String, Map<String, Double>> sorted) {
+    public static void printRegionsWithHighestGenerationPercentageByFuelType(Set<String> fuelTypes, Map<String, Map<String, Double>> regionsHighestGenerationPercByFuel) {
         for (String fuelType : fuelTypes) {
             System.out.println(String.format("\n%s - five regions where the generation percentage is the highest:", fuelType));
 
-            sorted.get(fuelType)
+            regionsHighestGenerationPercByFuel.get(fuelType)
                     .entrySet().stream()
                     .limit(5)
                     .forEach(s -> System.out.println(s.getKey() + " " + s.getValue()));

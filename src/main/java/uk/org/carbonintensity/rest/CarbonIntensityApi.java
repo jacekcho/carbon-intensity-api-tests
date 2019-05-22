@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.get;
+import static java.util.stream.Collectors.toMap;
 
 public class CarbonIntensityApi {
 
@@ -49,13 +50,6 @@ public class CarbonIntensityApi {
                 .collect(Collectors.toSet());
     }
 
-    public List<String> getAllRegionNames(List<Regions> allRegions) {
-        return allRegions
-                .stream()
-                .map(Regions::getShortName)
-                .collect(Collectors.toList());
-    }
-
     private BigDecimal getGenerationMixSum(Regions region) {
         List<GenerationMix> generationMix = region
                 .getData().get(0)
@@ -67,6 +61,56 @@ public class CarbonIntensityApi {
             sum = sum.add(new BigDecimal(Double.toString(gm.getPerc())));
         }
         return sum;
+    }
+
+    public Map<String, Map<String, Double>> getRegionsHighestGenerationPercByFuel(Set<String> allFuelTypes, List<Regions> allRegions) {
+        Map<String, Map<String, Double>> regionsHighestGenerationPercByFuel = new HashMap<>();
+
+        for (String fuelType : allFuelTypes) {
+            Map<String, Double> generationPercByRegion = getGenerationPercByRegion(allRegions, fuelType);
+            Map<String, Double> sortedGenerationPercByRegion = getSortedGenerationPercByRegion(generationPercByRegion);
+            regionsHighestGenerationPercByFuel.put(fuelType, sortedGenerationPercByRegion);
+        }
+
+        return regionsHighestGenerationPercByFuel;
+    }
+
+    private Map<String, Double> getGenerationPercByRegion(List<Regions> allRegions, String fuelType) {
+        Map<String, Double> maps = new HashMap<>();
+        for (String regionName : getAllRegionNames(allRegions)) {
+            Double perc = getGenerationPercForRegionByFuelType(allRegions, regionName, fuelType);
+            maps.put(regionName, perc);
+        }
+
+        return maps;
+    }
+
+    private List<String> getAllRegionNames(List<Regions> allRegions) {
+        return allRegions
+                .stream()
+                .map(Regions::getShortName)
+                .collect(Collectors.toList());
+    }
+
+    private double getGenerationPercForRegionByFuelType(List<Regions> allRegions, String regionName, String fuelType) {
+        return allRegions.stream()
+                .filter(r -> r.getShortName().equals(regionName))
+                .map(r -> r.getData().get(0))
+                .flatMap(d -> d.getGenerationMix().stream())
+                .filter(gm -> gm.getFuel().equals(fuelType))
+                .map(GenerationMix::getPerc)
+                .findFirst()
+                .get();
+    }
+
+    private Map<String, Double> getSortedGenerationPercByRegion(Map<String, Double> fuelTypeByGenerationPercMap) {
+        return fuelTypeByGenerationPercMap
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(
+                        toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                                LinkedHashMap::new));
     }
 
     private List<Integer> getAllRegionsIds() {
