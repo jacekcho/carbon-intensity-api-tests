@@ -34,11 +34,14 @@ public class CarbonIntensityApi {
         return sortedList;
     }
 
-    public boolean isGenerationMixSumsTo100ForAllRegions(List<Regions> allRegions) {
-        return allRegions
-                .stream()
-                .map(this::getGenerationMixSum)
-                .allMatch(c -> c.toString().equals("100.0"));
+    public Map<String, Double> getGenerationMixSumByRegion(List<Regions> allRegions) {
+        HashMap<String, Double> generationMixSumByRegion = new HashMap<>();
+
+        for (Regions region : allRegions) {
+            generationMixSumByRegion.put(region.getShortName(), getGenerationMixSum(region));
+        }
+
+        return generationMixSumByRegion;
     }
 
     public Set<String> getAllFuelTypes(List<Regions> allRegions) {
@@ -50,7 +53,7 @@ public class CarbonIntensityApi {
                 .collect(Collectors.toSet());
     }
 
-    private BigDecimal getGenerationMixSum(Regions region) {
+    private double getGenerationMixSum(Regions region) {
         List<GenerationMix> generationMix = region
                 .getData().get(0)
                 .getGenerationMix();
@@ -60,7 +63,7 @@ public class CarbonIntensityApi {
         for (GenerationMix gm : generationMix) {
             sum = sum.add(new BigDecimal(Double.toString(gm.getPerc())));
         }
-        return sum;
+        return sum.doubleValue();
     }
 
     public Map<String, Map<String, Double>> getRegionsHighestGenerationPercByFuel(Set<String> allFuelTypes, List<Regions> allRegions) {
@@ -81,7 +84,6 @@ public class CarbonIntensityApi {
             Double perc = getGenerationPercForRegionByFuelType(allRegions, regionName, fuelType);
             maps.put(regionName, perc);
         }
-
         return maps;
     }
 

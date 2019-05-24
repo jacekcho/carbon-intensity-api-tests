@@ -8,8 +8,7 @@ import uk.org.carbonintensity.utils.TestBase;
 import java.util.*;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static uk.org.carbonintensity.helpers.TestHelper.printForecastByRegionName;
-import static uk.org.carbonintensity.helpers.TestHelper.printRegionsWithHighestGenerationPercentageByFuelType;
+import static uk.org.carbonintensity.helpers.TestHelper.*;
 
 public class CarbonIntensityTest extends TestBase {
 
@@ -29,11 +28,14 @@ public class CarbonIntensityTest extends TestBase {
 
     @Test
     public void shouldCheckIsGenerationMixSumsTo100() {
-        // when
+        // given
         List<Regions> allRegions = carbonIntensityApi.getAllRegions();
 
+        // when
+        Map<String, Double> generationMixSumByRegion = carbonIntensityApi.getGenerationMixSumByRegion(allRegions);
+
         // then
-        assertThat(carbonIntensityApi.isGenerationMixSumsTo100ForAllRegions(allRegions)).isTrue();
+        assertThat(areAllRegionsGenerationMixSumTo100(generationMixSumByRegion)).isTrue();
     }
 
     @Test
