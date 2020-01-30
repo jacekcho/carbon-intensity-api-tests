@@ -15,5 +15,6 @@ public class TestBase {
     private void setRestAssuredConfiguration() {
         RestAssured.baseURI = DynamicProperty.getInstance("api.url").getString();
         RestAssured.config = new RestAssuredConfig().encoderConfig(encoderConfig().defaultContentCharset("UTF-8"));
+        RestAssured.useRelaxedHTTPSValidation();
     }
 }
